@@ -1,0 +1,13 @@
+.venv
+artifacts
+.env
+.DS_Store
+build/
+dist/
+artifacts/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pyw
+*.pyz

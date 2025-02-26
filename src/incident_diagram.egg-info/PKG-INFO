@@ -1,0 +1,30 @@
+Metadata-Version: 2.2
+Name: incident_diagram
+Version: 0.1.0
+Summary: A tool for creating incident diagrams
+Author-email: Your Name <your.email@example.com>
+Project-URL: Homepage, https://github.com/yourusername/incident_diagram
+Project-URL: Repository, https://github.com/yourusername/incident_diagram.git
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+Requires-Dist: gitingest@ git+ssh://git@github.com/cyclotruc/gitingest.git@c96a7d3
+Requires-Dist: click>=8.0.0
+Requires-Dist: toml>=0.10.0
+Requires-Dist: smolagents
+Requires-Dist: litellm
+Requires-Dist: tomli
+Dynamic: requires-dist
+
+# Incident Diagram
+
+A Python package for creating incident diagrams.
+
+## Installation
+
+```bash
+pip install incident-diagram
+```
+

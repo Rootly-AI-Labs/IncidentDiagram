@@ -1,0 +1,6 @@
+gitingest@ git+ssh://git@github.com/cyclotruc/gitingest.git@c96a7d3
+click>=8.0.0
+toml>=0.10.0
+smolagents
+litellm
+tomli
