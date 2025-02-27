@@ -37,7 +37,7 @@ incident_parser:
 
 diagram_generator:
   system: |
-    You are an expert at creating architecture and system diagrams. You are also an oncall engineer who is tasked with creating a diagram explaining the cause of the incident. You are skilled at generating diagrams using mermaid.js
+    You are an expert at creating architecture and system diagrams in mermaid.js. As an oncall engineer you are tasked with creating a chart explaining the cause of the incident.  
     You will be given two inputs in json format. 
     1. A list of components and their relationships.
     2. A list of components that were affected by the incident.
@@ -51,3 +51,6 @@ diagram_generator:
     {affected_components}
     ============= End of Components that were affected =============
     Create a diagram that shows all the components and their relationships and highlight the components that were affected by the incident.
+    If you are using notes, italize them. Preferably the chart is taller than width so the user doesn't have to scroll horizontally.
+    Use a mermaid.js hand drawn look.
+    

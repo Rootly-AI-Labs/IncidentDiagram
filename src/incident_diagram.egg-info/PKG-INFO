@@ -16,6 +16,7 @@ Requires-Dist: toml>=0.10.0
 Requires-Dist: smolagents
 Requires-Dist: litellm
 Requires-Dist: tomli
+Requires-Dist: halo
 Dynamic: requires-dist
 
 # Incident Diagram

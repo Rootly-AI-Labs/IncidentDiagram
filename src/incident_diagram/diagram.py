@@ -4,6 +4,8 @@ from pathlib import Path
 import litellm
 import os
 from llm_utils import LLMUtils
+from gitingest import ingest
+from halo import Halo
 
 class Diagram:
     """Main class for handling incident diagram creation"""
@@ -22,11 +24,29 @@ class Diagram:
                 self.prompts[key] = item
         return self.prompts
     # Initialize model and agent
-    def __init__(self, tree, code, model):
-        self.tree = tree
-        self.code = code
+    def __init__(
+            self, 
+            url = None,
+            directory = None,
+            incident_summary = None,
+            model = "gpt-4o"
+        ):
+
+        if url is not None:
+            _, self.tree, self.code = ingest(url)
+        elif directory is not None:
+            _, self.tree, self.code = ingest(directory)
+        else:
+            raise ValueError("Either url or directory must be provided")
+        
+        if incident_summary is not None:
+            self.incident_summary = incident_summary
+        else:
+            raise ValueError("incident_summary must be provided")
+
         self._load_prompts()
         self.model = LLMUtils.get_llm_model(model)
+
 
         # litellm._turn_on_debug()
         # Just to be consistent, I am doing all formatting in the run method.
@@ -34,24 +54,14 @@ class Diagram:
         parser_prompts['system'] = self.prompts["code_parser"]["system"]
         parser_prompts['user'] = self.prompts["code_parser"]["user"]
         self.code_parser = {
-            "agent": CodeAgent(
-                tools=[],
-                model=self.model, 
-                verbosity_level = self.LLM_LOGLEVEL,
-                max_steps=self.LLM_MAX_STEPS_OVERRIDE
-            ),
+            "agent": self._get_code_agent(),
             "prompt": parser_prompts
         }
         incident_prompts = {}
         incident_prompts['system'] = self.prompts["incident_parser"]["system"]
         incident_prompts['user'] = self.prompts["incident_parser"]["user"]
         self.incident_parser = {
-            "agent": CodeAgent(
-                tools=[],
-                model=self.model, 
-                verbosity_level = self.LLM_LOGLEVEL,
-                max_steps=self.LLM_MAX_STEPS_OVERRIDE
-            ),
+            "agent": self._get_code_agent(),
             "prompt": incident_prompts
         }
 
@@ -59,12 +69,7 @@ class Diagram:
         diagram_prompts['system'] = self.prompts["diagram_generator"]["system"]
         diagram_prompts['user'] = self.prompts["diagram_generator"]["user"]
         self.diagram_generator = {
-            "agent": CodeAgent(
-                tools=[],
-                model=self.model, 
-                verbosity_level = self.LLM_LOGLEVEL,
-                max_steps=self.LLM_MAX_STEPS_OVERRIDE
-            ),
+            "agent": self._get_code_agent(),
             "prompt": diagram_prompts
         }
         
@@ -85,15 +90,41 @@ class Diagram:
     
     def generate(self, output_path):
         """Generate the diagram and save to output path"""
-        # print()
-        components = self.code_parser['agent'].run(self._format_prompt(self.code_parser['prompt'], tree=self.tree, code=self.code))
-        incident = self.incident_parser['agent'].run(self._format_prompt(self.incident_parser['prompt'], components=components, incident=self.incident))
-        chart = self.diagram_generator['agent'].run(self._format_prompt(self.diagram_generator['prompt'], components=components, affected_components=incident))
         
-        # Create directory if it doesn't exist
-        os.makedirs(output_path, exist_ok=True)
-        output_file = os.path.join(output_path, "incident.md")
-        with open(output_file, "w") as f:
-            f.write(chart)
-        # self.agent.run(self.prompts["generate_chart"])
-        return "Diagram generated"
+        components = self._run_with_spinner("Parsing code", lambda: self.code_parser['agent'].run(self._format_prompt(self.code_parser['prompt'], tree=self.tree, code=self.code)))
+        incident_components = self._run_with_spinner("Parsing incident", lambda: self.incident_parser['agent'].run(self._format_prompt(self.incident_parser['prompt'], components=components, incident=self.incident_summary)))
+        chart = self._run_with_spinner("Generating diagram", lambda: self.diagram_generator['agent'].run(self._format_prompt(self.diagram_generator['prompt'], components=components, affected_components=incident_components)))
+        
+        if not isinstance(chart, str):
+            raise ValueError("Generated Output was not a string. LLM is probably not performing well. Please try again.")
+        if not "```mermaid" in chart:
+            chart = "```mermaid\n" + chart + "\n```"
+        if output_path is not None:
+            # Create directory if it doesn't exist
+            os.makedirs(output_path, exist_ok=True)
+            output_file = os.path.join(output_path, "incident.md")
+            with open(output_file, "w") as f:
+                f.write(chart)
+            print(f"Chart generated in {output_file}")
+            return output_file
+        else:
+            return chart
+        
+    def _get_code_agent(self):
+        return CodeAgent(
+            tools=[],
+            model=self.model, 
+            verbosity_level = self.LLM_LOGLEVEL,
+            max_steps=self.LLM_MAX_STEPS_OVERRIDE,
+            additional_authorized_imports=["json"]
+        )
+    
+    def _run_with_spinner(self, text:str, function ):
+        spinner = Halo(text=text, spinner='dots')
+        try:
+            result = function()
+            spinner.stop()
+            return result
+        except Exception as e:
+            spinner.fail(f'Failed to run {text}')
+            raise e

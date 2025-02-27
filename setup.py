@@ -11,6 +11,7 @@ setup(
         "toml>=0.10.0",
         "smolagents",
         "litellm",
-        "tomli"
+        "tomli",
+        "halo"
     ]
 )

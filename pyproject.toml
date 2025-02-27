@@ -17,7 +17,7 @@ classifiers = [
 # With:
 dynamic = ["dependencies"]
 
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 
 [project.urls]
 Homepage = "https://github.com/yourusername/incident_diagram"

@@ -4,6 +4,8 @@ setup.py
 src/incident_diagram/__init__.py
 src/incident_diagram/cli.py
 src/incident_diagram/diagram.py
+src/incident_diagram/llm_utils.py
+src/incident_diagram/utils.py
 src/incident_diagram.egg-info/PKG-INFO
 src/incident_diagram.egg-info/SOURCES.txt
 src/incident_diagram.egg-info/dependency_links.txt

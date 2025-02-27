@@ -1,0 +1,2 @@
+I forgot to add the .env file in the right location. So when I run the CLI, it wasn't able to find the .env file.
+Also there was a bug in the bulk anomaly agent. I was passing wrong parameters to the LLM.
