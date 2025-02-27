@@ -3,7 +3,7 @@ import yaml
 from pathlib import Path
 import litellm
 import os
-from llm_utils import LLMUtils
+from incident_diagram.llm_utils import LLMUtils
 from gitingest import ingest
 from halo import Halo
 
@@ -15,6 +15,7 @@ class Diagram:
     def _load_prompts(self):
         self.prompts = {}
         prompt_path = Path(__file__).parent / "prompts.yaml"
+        print(prompt_path)
         with open(prompt_path) as f:
             prompts = yaml.safe_load(f)
             for key, value in prompts.items():

@@ -1,7 +1,7 @@
 """Incident Diagram - A tool for creating incident diagrams"""
 import os
 from dotenv import load_dotenv
-from utils import Utils
+from incident_diagram.utils import Utils
 
 __version__ = "0.1.0" 
 

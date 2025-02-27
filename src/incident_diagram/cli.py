@@ -1,6 +1,6 @@
 import click
 import os
-from diagram import Diagram
+from incident_diagram.diagram import Diagram
 import requests
 
 class CLI:
@@ -15,7 +15,7 @@ class CLI:
     @click.option('--incident-summary', '-i', type=str, help='Incident summary')
     @click.option('--incident-summary-file', '-f', type=click.Path(exists=True), help='Path to the incident summary file')
     @click.option('--incident-summary-url', '-iu', type=str, help='URL to the incident summary')
-    def diagram(dir: str, url: str, model: str, output_path: str, incident_summary: str, incident_summary_file: str):
+    def diagram(dir: str, url: str, model: str, output_path: str, incident_summary: str, incident_summary_file: str, incident_summary_url: str):
         """Create an incident diagram from input file and save to output path"""
 
         if incident_summary is None and incident_summary_file is None:

@@ -1,2 +1,2 @@
 [console_scripts]
-diagram = incident_diagram.cli:CLI.generate
+incidentdiagram = incident_diagram.cli:CLI.diagram
