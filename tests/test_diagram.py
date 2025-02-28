@@ -4,7 +4,7 @@ from unittest.mock import Mock, patch
 
 @pytest.fixture
 def mock_ingest():
-    with patch('incident_diagram.diagram.ingest') as mock:
+    with patch('incident_diagram.diagram.ingest_async') as mock:
         mock.return_value = (None, "mock_tree", "mock_code")
         yield mock
 

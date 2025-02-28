@@ -4,12 +4,17 @@ from pathlib import Path
 import litellm
 import os
 from incident_diagram.llm_utils import LLMUtils
-from gitingest import ingest
+from gitingest import ingest_async
 from halo import Halo
+import asyncio
+import nest_asyncio
+import logging
+
+
+
 
 class Diagram:
     """Main class for handling incident diagram creation"""
-    LLM_LOGLEVEL = LogLevel.INFO
     LLM_MAX_STEPS_OVERRIDE = 6
     # Load the model and agent configurations
     def _load_prompts(self):
@@ -26,20 +31,29 @@ class Diagram:
         return self.prompts
     # Initialize model and agent
     def __init__(
-            self, 
+            self,
             url = None,
             directory = None,
             incident_summary = None,
-            model = "gpt-4o"
+            model = "gpt-4o",
+            llm_loglevel = LogLevel.ERROR,
+            verbosity_level = logging.ERROR
         ):
+        self.llm_loglevel = llm_loglevel
+        self.verbosity_level = verbosity_level
+        logging.basicConfig(level=self.verbosity_level)
+
+        # This is a hack to make the ingest_async function work with the sync code for Jupyter notebooks
+        nest_asyncio.apply()
+        loop = asyncio.get_event_loop()
 
         if url is not None:
-            _, self.tree, self.code = ingest(url)
+            _, self.tree, self.code = loop.run_until_complete(ingest_async(url))
         elif directory is not None:
-            _, self.tree, self.code = ingest(directory)
+            _, self.tree, self.code = loop.run_until_complete(ingest_async(directory))
         else:
             raise ValueError("Either url or directory must be provided")
-        
+
         if incident_summary is not None:
             self.incident_summary = incident_summary
         else:
@@ -73,7 +87,7 @@ class Diagram:
             "agent": self._get_code_agent(),
             "prompt": diagram_prompts
         }
-        
+
     def _format_prompt(self, prompt, **kwargs):
         formatted_prompt = {}
         for key, value in prompt.items():
@@ -88,14 +102,14 @@ class Diagram:
         # Join formatted prompts into single string with key:value pairs
         prompt_str = "\n\n".join([f"{key} : {value}" for key, value in formatted_prompt.items()])
         return prompt_str
-    
-    def generate(self, output_path):
+
+    def generate(self, output_path=None):
         """Generate the diagram and save to output path"""
-        
+
         components = self._run_with_spinner("Parsing code", lambda: self.code_parser['agent'].run(self._format_prompt(self.code_parser['prompt'], tree=self.tree, code=self.code)))
         incident_components = self._run_with_spinner("Parsing incident", lambda: self.incident_parser['agent'].run(self._format_prompt(self.incident_parser['prompt'], components=components, incident=self.incident_summary)))
         chart = self._run_with_spinner("Generating diagram", lambda: self.diagram_generator['agent'].run(self._format_prompt(self.diagram_generator['prompt'], components=components, affected_components=incident_components)))
-        
+
         if not isinstance(chart, str):
             raise ValueError("Generated Output was not a string. LLM is probably not performing well. Please try again.")
         if not "```mermaid" in chart:
@@ -110,16 +124,16 @@ class Diagram:
             return output_file
         else:
             return chart
-        
+
     def _get_code_agent(self):
         return CodeAgent(
             tools=[],
-            model=self.model, 
-            verbosity_level = self.LLM_LOGLEVEL,
+            model=self.model,
+            verbosity_level = self.llm_loglevel,
             max_steps=self.LLM_MAX_STEPS_OVERRIDE,
             additional_authorized_imports=["json"]
         )
-    
+
     def _run_with_spinner(self, text:str, function ):
         spinner = Halo(text=text, spinner='dots')
         try:
