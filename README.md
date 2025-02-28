@@ -19,6 +19,15 @@ pip install .
 cat "A lot of details about the incident" > incident.txt
 incidentdiagram -f incident.txt  -u https://github.com/Rootly-AI-Lab/EventOrOutage/tree/main -m claude-3.5
 ```
+
+## Develop
+```
+pip install -e .[dev]
+```
+To run tests:
+```
+pytest
+```
 **Requires:**
 * Python > 3.10
 * OpenAPI/Gemini/Anthropic API Key
@@ -30,17 +39,16 @@ Here are a few ways you can use IncidentDiagram:
 * `incidentdiagram -iu www.postmortems.com/1345  -u https://github.com/Rootly-AI-Lab/EventOrOutage/tree/main -m claude-3.5` – Download the incident summary from a URL and generate a diagram
 
 ## Stack 🛠️
--   **LLMs:** GPT-4, Claude, Gemini and self-hosted (Deepseek). 
+-   **LLMs:** GPT-4, Claude, Gemini and self-hosted (Deepseek).
 -   **Agent:** HuggingFace smolagents
 -   **Data Sources:** External APIs for holidays, news, and event tracking
- 
-## Backstory 
+
+## Backstory
 
 
-## Future Improvements 
+## Future Improvements
 - More charts from incident reports
 
 ## About the Rootly AI Lab
-This project was developed by the Rootly AI Lab. The AI Lab is a fellow-led program designed to redefine reliability and system operations. We develop innovative prototypes, create open-source tools, and produce research reports we share with the community. 
+This project was developed by the Rootly AI Lab. The AI Lab is a fellow-led program designed to redefine reliability and system operations. We develop innovative prototypes, create open-source tools, and produce research reports we share with the community.
 ![Rootly AI logo](Rootly_AI_Logo_White.png)
-
