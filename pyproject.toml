@@ -24,6 +24,10 @@ dev = [
     "pytest>=8.0.0",
     "pytest-cov>=4.1.0",
     "pre-commit>=3.6.0",
+    "setuptools",
+    "wheel",
+    "twine",
+    "build"
 ]
 
 
@@ -35,8 +39,8 @@ where = ["src"]
 incident_diagram = ["*.yaml"]
 
 [project.urls]
-Homepage = "https://github.com/yourusername/incident_diagram"
-Repository = "https://github.com/yourusername/incident_diagram.git"
+Homepage = "https://github.com/Rootly-AI-Lab/IncidentDiagram"
+Repository = "https://github.com/Rootly-AI-Lab/IncidentDiagram.git"
 
 [project.scripts]
 incidentdiagram = "incident_diagram.cli:CLI.diagram"
