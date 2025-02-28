@@ -1,2 +1,0 @@
-[console_scripts]
-incidentdiagram = incident_diagram.cli:CLI.diagram

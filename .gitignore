@@ -6,8 +6,12 @@ build/
 dist/
 artifacts/
 __pycache__/
+.pytest_cache/
+.coverage
+htmlcov/
 *.pyc
 *.pyo
 *.pyd
 *.pyw
 *.pyz
+*.egg-info/

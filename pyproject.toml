@@ -15,9 +15,18 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 # With:
+requires-python = ">=3.10"
+
 dynamic = ["dependencies"]
 
-requires-python = ">=3.10"
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-cov>=4.1.0",
+    "pre-commit>=3.6.0",
+]
+
+
 
 [tool.setuptools.packages.find]
 where = ["src"]
@@ -30,4 +39,4 @@ Homepage = "https://github.com/yourusername/incident_diagram"
 Repository = "https://github.com/yourusername/incident_diagram.git"
 
 [project.scripts]
-incidentdiagram = "incident_diagram.cli:CLI.diagram" 
+incidentdiagram = "incident_diagram.cli:CLI.diagram"
