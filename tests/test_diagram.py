@@ -13,6 +13,7 @@ def test_diagram_initialization(mock_ingest, mock_env_vars):
         url="https://github.com/test/repo",
         incident_summary="test incident"
     )
+    print(diagram.incident_summary)
     assert diagram.incident_summary == "test incident"
     assert diagram.tree == "mock_tree"
     assert diagram.code == "mock_code"

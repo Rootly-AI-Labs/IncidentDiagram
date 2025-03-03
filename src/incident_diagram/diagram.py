@@ -62,7 +62,6 @@ class Diagram:
         self._load_prompts()
         self.model = LLMUtils.get_llm_model(model)
 
-
         # litellm._turn_on_debug()
         # Just to be consistent, I am doing all formatting in the run method.
         parser_prompts = {}
@@ -72,12 +71,29 @@ class Diagram:
             "agent": self._get_code_agent(),
             "prompt": parser_prompts
         }
+
         incident_prompts = {}
         incident_prompts['system'] = self.prompts["incident_parser"]["system"]
         incident_prompts['user'] = self.prompts["incident_parser"]["user"]
         self.incident_parser = {
             "agent": self._get_code_agent(),
             "prompt": incident_prompts
+        }
+
+        timeline_prompts = {}
+        timeline_prompts['system'] = self.prompts["timeline_parser"]["system"]
+        timeline_prompts['user'] = self.prompts["timeline_parser"]["user"]
+        self.timeline_parser = {
+            "agent": self._get_code_agent(),
+            "prompt": timeline_prompts
+        }
+
+        timeline_chart_prompts = {}
+        timeline_chart_prompts['system'] = self.prompts["timeline_chart_generator"]["system"]
+        timeline_chart_prompts['user'] = self.prompts["timeline_chart_generator"]["user"]
+        self.timeline_chart_generator = {
+            "agent": self._get_code_agent(),
+            "prompt": timeline_chart_prompts
         }
 
         diagram_prompts = {}
@@ -110,10 +126,22 @@ class Diagram:
         incident_components = self._run_with_spinner("Parsing incident", lambda: self.incident_parser['agent'].run(self._format_prompt(self.incident_parser['prompt'], components=components, incident=self.incident_summary)))
         chart = self._run_with_spinner("Generating diagram", lambda: self.diagram_generator['agent'].run(self._format_prompt(self.diagram_generator['prompt'], components=components, affected_components=incident_components)))
 
+        timeline = self._run_with_spinner("Generating timeline", lambda: self.timeline_parser['agent'].run(self._format_prompt(self.timeline_parser['prompt'], incident=self.incident_summary)))
+        timeline_chart = self._run_with_spinner("Generating chart", lambda: self.timeline_chart_generator['agent'].run(self._format_prompt(self.timeline_chart_generator['prompt'], timeline=timeline)))
+
         if not isinstance(chart, str):
             raise ValueError("Generated Output was not a string. LLM is probably not performing well. Please try again.")
+        if not isinstance(chart, str):
+            raise ValueError("Generated Output was not a string. LLM is probably not performing well. Please try again.")
+
         if not "```mermaid" in chart:
             chart = "```mermaid\n" + chart + "\n```"
+        if not "```mermaid" in timeline_chart:
+            timeline_chart = "```mermaid\n" + timeline_chart + "\n```"
+
+        # append timeline_chart to chart
+        chart = chart + "\n\n" + timeline_chart
+
         if output_path is not None:
             # Create directory if it doesn't exist
             os.makedirs(output_path, exist_ok=True)
