@@ -1,0 +1,47 @@
+SUMMARY:
+
+On Monday, 11 April, 2016, Google Compute Engine instances in all regions lost external connectivity for a total of 18 minutes, from 19:09 to 19:27 Pacific Time.
+
+We recognize the severity of this outage, and we apologize to all of our customers for allowing it to occur. As of this writing, the root cause of the outage is fully understood and GCE is not at risk of a recurrence. In this incident report, we are sharing the background, root cause and immediate steps we are taking to prevent a future occurrence. Additionally, our engineering teams will be working over the next several weeks on a broad array of prevention, detection and mitigation systems intended to add additional defense in depth to our existing production safeguards.
+
+Finally, to underscore how seriously we are taking this event, we are offering GCE and VPN service credits to all impacted GCP applications equal to (respectively) 10% and 25% of their monthly charges for GCE and VPN. These credits exceed what we promise in the Compute Engine Service Level Agreement (https://cloud.google.com/compute/sla) or Cloud VPN Service Level Agreement (https://cloud.google.com/vpn/sla), but are in keeping with the spirit of those SLAs and our ongoing intention to provide a highly-available Google Cloud product suite to all our customers.
+
+DETAILED DESCRIPTION OF IMPACT:
+
+On Monday, 11 April, 2016 from 19:09 to 19:27 Pacific Time, inbound internet traffic to Compute Engine instances was not routed correctly, resulting in dropped connections and an inability to reconnect. The loss of inbound traffic caused services depending on this network path to fail as well, including VPNs and L3 network load balancers. Additionally, the Cloud VPN offering in the asia-east1 region experienced the same traffic loss starting at an earlier time of 18:14 Pacific Time but the same end time of 19:27.
+
+This event did not affect Google App Engine, Google Cloud Storage, and other Google Cloud Platform products; it also did not affect internal connectivity between GCE services including VMs, HTTP and HTTPS (L7) load balancers, and outbound internet traffic.
+
+TIMELINE and ROOT CAUSE:
+
+Google uses contiguous groups of internet addresses -- known as IP blocks -- for Google Compute Engine VMs, network load balancers, Cloud VPNs, and other services which need to communicate with users and systems outside of Google. These IP blocks are announced to the rest of the internet via the industry-standard BGP protocol, and it is these announcements which allow systems outside of Google’s network to ‘find’ GCP services regardless of which network they are on.
+
+To maximize service performance, Google’s networking systems announce the same IP blocks from several different locations in our network, so that users can take the shortest available path through the internet to reach their Google service. This approach also enhances reliability; if a user is unable to reach one location announcing an IP block due to an internet failure between the user and Google, this approach will send the user to the next-closest point of announcement. This is part of the internet’s fabled ability to ‘route around’ problems, and it masks or avoids numerous localized outages every week as individual systems in the internet have temporary problems.
+
+At 14:50 Pacific Time on April 11th, our engineers removed an unused GCE IP block from our network configuration, and instructed Google’s automated systems to propagate the new configuration across our network. By itself, this sort of change was harmless and had been performed previously without incident. However, on this occasion our network configuration management software detected an inconsistency in the newly supplied configuration. The inconsistency was triggered by a timing quirk in the IP block removal - the IP block had been removed from one configuration file, but this change had not yet propagated to a second configuration file also used in network configuration management. In attempting to resolve this inconsistency the network management software is designed to ‘fail safe’ and revert to its current configuration rather than proceeding with the new configuration. However, in this instance a previously-unseen software bug was triggered, and instead of retaining the previous known good configuration, the management software instead removed all GCE IP blocks from the new configuration and began to push this new, incomplete configuration to the network.
+
+One of our core principles at Google is ‘defense in depth’, and Google’s networking systems have a number of safeguards to prevent them from propagating incorrect or invalid configurations in the event of an upstream failure or bug. These safeguards include a canary step where the configuration is deployed at a single site and that site is verified to still be working correctly, and a progressive rollout which makes changes to only a fraction of sites at a time, so that a novel failure can be caught at an early stage before it becomes widespread. In this event, the canary step correctly identified that the new configuration was unsafe. Crucially however, a second software bug in the management software did not propagate the canary step’s conclusion back to the push process, and thus the push system concluded that the new configuration was valid and began its progressive rollout.
+
+As the rollout progressed, those sites which had been announcing GCE IP blocks ceased to do so when they received the new configuration. The fault tolerance built into our network design worked correctly and sent GCE traffic to the the remaining sites which were still announcing GCE IP blocks. As more and more sites stopped announcing GCE IP blocks, our internal monitoring picked up two anomalies: first, the Cloud VPN in asia-east1 stopped functioning at 18:14 because it was announced from fewer sites than GCE overall, and second, user latency to GCE was anomalously rising as more and more users were sent to sites which were not close to them. Google’s Site Reliability Engineers started investigating the problem when the first alerts were received, but were still trying to determine the root cause 53 minutes later when the last site announcing GCE IP blocks received the configuration at 19:07.
+
+With no sites left announcing GCE IP blocks, inbound traffic from the internet to GCE dropped quickly, reaching >95% loss by 19:09. Internal monitors generated dozens of alerts in the seconds after the traffic loss became visible at 19:08, and the Google engineers who had been investigating a localized failure of the asia-east1 VPN now knew that they had a widespread and serious problem. They did precisely what we train for, and decided to revert the most recent configuration changes made to the network even before knowing for sure what the problem was. This was the correct action, and the time from detection to decision to revert to the end of the outage was thus just 18 minutes.
+
+With the immediate outage over, the team froze all configuration changes to the network, and worked in shifts overnight to ensure first that the systems were stable and that there was no remaining customer impact, and then to determine the root cause of the problem. By 07:00 on April 12 the team was confident that they had established the root cause as a software bug in the network configuration management software.
+
+DETECTION, REMEDIATION AND PREVENTION:
+
+With both the incident and the immediate risk now over, the engineering team’s focus is on prevention and mitigation. There are a number of lessons to be learned from this event -- for example, that the safeguard of a progressive rollout can be undone by a system designed to mask partial failures -- which yield similarly-clear actions which we will take, such as monitoring directly for a decrease in capacity or redundancy even when the system is still functioning properly. It is our intent to enumerate all the lessons we can learn from this event, and then to implement all of the changes which appear useful. As of the time of this writing in the evening of 12 April, there are already 14 distinct engineering changes planned spanning prevention, detection and mitigation, and that number will increase as our engineering teams review the incident with other senior engineers across Google in the coming week. Concretely, the immediate steps we are taking include:
+
+Monitoring targeted GCE network paths to detect if they change or cease to function;
+
+Comparing the IP block announcements before and after a network configuration change to ensure that they are identical in size and coverage;
+
+Semantic checks for network configurations to ensure they contain specific Cloud IP blocks.
+
+A FINAL WORD:
+
+We take all outages seriously, but we are particularly concerned with outages which affect multiple zones simultaneously because it is difficult for our customers to mitigate the effect of such outages. This incident report is both longer and more detailed than usual precisely because we consider the April 11th event so important, and we want you to understand why it happened and what we are doing about it. It is our hope that, by being transparent and providing considerable detail, we both help you to build more reliable services, and we demonstrate our ongoing commitment to offering you a reliable Google Cloud platform.
+
+Sincerely,
+
+Benjamin Treynor Sloss | VP 24x7 | Google

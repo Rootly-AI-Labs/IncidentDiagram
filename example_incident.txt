@@ -1,6 +1,3 @@
-I forgot to add the .env file in the right location. So when I run the CLI, it wasn't able to find the .env file.
-Also there was a bug in the bulk anomaly agent. I was passing wrong parameters to the LLM.
-
 (Language inspired by https://cloud.google.com/blog/products/gcp/google-cloud-network-outage-incident-april-2016 to work with https://github.com/Rootly-AI-Lab/EventOrOutage)
 
 SUMMARY:
