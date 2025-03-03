@@ -16,7 +16,7 @@ Chart generated in artifacts/incident.md
 python -m venv .venv
 source .venv/bin/activate
 pip install .
-cat "A lot of details about the incident" > incident.txt
+echo "A lot of details about the incident" > incident.txt
 incidentdiagram -f incident.txt  -u https://github.com/Rootly-AI-Lab/EventOrOutage/tree/main -m claude-3.5
 ```
 
