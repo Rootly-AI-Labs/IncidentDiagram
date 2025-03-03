@@ -1,0 +1,50 @@
+I forgot to add the .env file in the right location. So when I run the CLI, it wasn't able to find the .env file.
+Also there was a bug in the bulk anomaly agent. I was passing wrong parameters to the LLM.
+
+(Language inspired by https://cloud.google.com/blog/products/gcp/google-cloud-network-outage-incident-april-2016 to work with https://github.com/Rootly-AI-Lab/EventOrOutage)
+
+SUMMARY:
+
+On Monday, 11 April, 2024, app servers running instances in AI SRE in all regions began genrating 5xx for a total of 18 minutes, from 19:09 to 19:27 Pacific Time.
+
+We recognize the severity of this outage and this postmortem is written to share the background, root cause and immediate steps we are taking to prevent a future occurrence. Additionally, we will be working over the next several weeks on a broad array of prevention, detection and mitigation systems intended to add additional defense in depth to our existing production safeguards.
+
+DETAILED DESCRIPTION OF IMPACT:
+
+On Monday, 11 April, 2024 from 19:09 to 19:27 Pacific Time, inbound internet traffic to several AI SRE instances began generating 5xx errors, resulting in clients receiving errors and timeouts. As the incident progressed, the % of traffic receiving 5xxes increased linearly. Additionally, some internal services (later discovered to be pre prod testing systems) detected errors starting at an earlier time of 18:14 Pacific Time but the same end time of 19:27.
+
+This event only affected AI SRE instances. It did not affect other services.
+
+TIMELINE and ROOT CAUSE:
+
+When new changes are deployed, they are first tested in pre-prod environments. These tests are run on a significant subset of the production traffic. Once the tests pass, the changes are deployed to production in a staggered manner. Deploys take about 15-20 minutes.
+
+At 14:50 Pacific Time on April 11th, A broken code change was deployed to production. After our internal release process signed off on the change, it was deployed to pre-prod.
+
+At 18:14 Pacific Time, the pre-prod environment began generating 5xx errors. Due to a filter in the log processing system, the errors were not surfaced as system errors and the test system considered the test to be successful.
+
+At 19:08 pm, the automated prod nominator system began deploying the change to production.
+
+At 19:09 pm, the production environment began generating 5xx errors.
+
+As the number of machines affected increased, the number of 5xx errors increased linearly.
+
+At 19:27 pm, the automated prod nominator system detected the issue and rolled back the change.
+
+DETECTION, REMEDIATION AND PREVENTION:
+
+With both the incident and the immediate risk now over, the engineering team identified the code change as the root cause. There were two problems
+1) A configuration file (.env)was removed from version control but machines that had previously run the system had it present (all test instances). When a new machine checked out code (production machines), the config file wasn't present and the system failed to start.
+2) A library was updated but the function call wasn't updated to the new function signature. The LLM was being passed the wrong parameters in BulkAnomalyDetector.
+
+NEXT STEPS:
+1. The automated prod nominator system was updated to check for the presence of the configuration file. If it is not present, the system will not deploy the change.
+2. Audit of error filters in test machines to ensure they are not masking errors.
+3. More test coverage of BulkAnomalyDetector.
+
+1) The automated prod nominator system was updated to check for the presence of the configuration file. If it is not present, the system will not deploy the change.
+2) The LLM was updated to the new function signature.
+
+
+1) The automated prod nominator system was updated to check for the presence of the configuration file. If it is not present, the system will not deploy the change.
+2) The LLM was updated to the new function signature.
