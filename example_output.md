@@ -1,91 +1,59 @@
 ```mermaid
-
-%%{init: {'theme': 'base', 'themeVariables': { 'handDrawn': true }}}%%
-graph TD
-    %% Nodes definition with labels and notes for affected nodes
-    CLI[CLI Interface<br>*Configuration issue: .env file missing in the right location causing CLI startup failure.*]
-    Bulk[BulkAnomalyAgent<br>*Bug: Wrong parameters passed to LLM resulting in anomaly processing errors.*]
-    Single[SingleAnomalyAgent]
-    Naive[NaiveAnomalyDetecter]
-    Synthetic[Synthetic Data Generator]
-    Markdown[Markdown Generator]
-    File[File Utilities]
-    LLM[LLM Utilities]
-    Core[Core Utilities and Templates]
-    Holidays[Holidays API Tool]
-    Calendarific[Calendarific API Tool]
-    Project[Project Metadata and Configuration]
-    CodeAgent[CodeAgent]
-
-    %% Edges from CLI Interface
-    CLI --> Single
-    CLI --> Bulk
-    CLI --> Naive
-    CLI --> Markdown
-    CLI --> Synthetic
-
-    %% Edges for BulkAnomalyAgent
-    Bulk --> LLM
-    Bulk --> Core
-    Bulk --> Holidays
-    Bulk --> Calendarific
-    Bulk --> CodeAgent
-    Bulk --> Markdown
-    Bulk --> Naive
-
-    %% Edges for SingleAnomalyAgent
-    Single --> LLM
-    Single --> Core
-    Single --> Holidays
-    Single --> Calendarific
-    Single --> CodeAgent
-
-    %% Edges for NaiveAnomalyDetecter
-    Naive --> CLI
-    Naive --> Bulk
-
-    %% Edges for Synthetic Data Generator
-    Synthetic --> Markdown
-
-    %% Edges for Markdown Generator
-    Markdown --> File
-    Markdown --> CLI
-    Markdown --> Synthetic
-
-    %% Edges for File Utilities
-    File --> Markdown
-
-    %% Edges for LLM Utilities
-    LLM --> Single
-    LLM --> Bulk
-
-    %% Edges for Core Utilities and Templates
-    Core --> Single
-    Core --> Bulk
-
-    %% Edges for Holidays API Tool
-    Holidays --> Single
-    Holidays --> Bulk
-
-    %% Edges for Calendarific API Tool
-    Calendarific --> Single
-    Calendarific --> Bulk
-
-    %% Project Metadata and Configuration has no relationships
-
-    %% Styling for affected components (highlighting)
-    classDef affected fill:#ffcccc,stroke:#cc0000,stroke-width:2px;
-    class CLI,Bulk affected;
-
+timeline
+    title Timeline Chart
+    2024-04-11 14_50 : Code Change Deployed - A broken code change was deployed to production and then to pre-prod as part of the release process.
+    2024-04-11 18_14 : Pre-Prod Errors Detected - Pre-prod environment started generating 5xx errors, but error filters masked the issue during tests.
+    2024-04-11 19_08 : Production Deployment Initiated - The automated prod nominator system began deploying the change to production.
+    2024-04-11 19_09 : Production Outage Begins - Production environments began generating 5xx errors as the change continued deploying; error rate increased linearly.
+    2024-04-11 19_27 : Rollback Executed - The automated prod nominator system detected the issues and rolled back the change, ending the incident.
 ```
 
 ```mermaid
-timeline
-    title Timeline
-    2024-04-11 14_50 : Broken Code Change Deployed - At 14_50 PT a broken code change was deployed to production and later pushed to pre-prod.
-    2024-04-11 18_14 : Pre-prod 5xx Errors Detected - At 18_14 PT internal pre-prod testing systems detected 5xx errors though error filtering masked them as system errors.
-    2024-04-11 19_08 : Production Deployment Initiated - At 19_08 PT the automated production nominator system began deploying the change to production.
-    2024-04-11 19_09 : Production 5xx Errors Detected - At 19_09 PT production instances began generating 5xx errors as the deployment affected more machines.
-    2024-04-11 19_09 to 2024-04-11 19_27 : Incident in Effect - From 19_09 to 19_27 PT the incident was in effect with increasing 5xx errors across production instances.
-    2024-04-11 19_27 : Change Rolled Back - At 19_27 PT the automated production nominator system detected the issue and rolled back the change ending the incident.
+
+%% Mermaid diagram with a hand drawn look (simulated by dashed red stroke)
+flowchart TD
+    CLI[CLI<br/><sub>Entry point for command line interactions</sub>]
+    SingleAnomalyAgent[SingleAnomalyAgent<br/><sub>Processes single anomaly instance</sub>]
+    BulkAnomalyAgent[BulkAnomalyAgent<br/><sub>*Library update introduced a bug*</sub>]
+    NaiveAnomalyDetecter[NaiveAnomalyDetecter<br/><sub>Detects anomalies from CSV input</sub>]
+    LLMUtils[LLMUtils<br/><sub>Configures LLM models</sub>]
+    MarkdownGenerator[MarkdownGenerator<br/><sub>Generates markdown reports and diagrams</sub>]
+    FileUtils[FileUtils<br/><sub>Saves markdown files</sub>]
+    Utils[Utils<br/><sub>General utilities and env loading</sub>]
+    SyntheticData[SyntheticData<br/><sub>Generates synthetic traffic data</sub>]
+    SyntheticDataGenerator[SyntheticDataGenerator<br/><sub>Triggers synthetic data generation</sub>]
+    CalendarificAPITool[CalendarificAPITool<br/><sub>Fetches holiday/event data</sub>]
+    HolidaysAPITool[HolidaysAPITool<br/><sub>Fetches holiday data</sub>]
+    ConfigFiles["Configuration Files<br/><sub>*The .env file was removed from version control, leading to startup failures on production machines.*</sub>"]
+
+    %% Relationships
+    CLI --> SingleAnomalyAgent
+    CLI --> BulkAnomalyAgent
+    CLI --> NaiveAnomalyDetecter
+    CLI --> MarkdownGenerator
+
+    BulkAnomalyAgent --> LLMUtils
+    BulkAnomalyAgent --> Utils
+    BulkAnomalyAgent --> HolidaysAPITool
+    BulkAnomalyAgent --> CalendarificAPITool
+
+    SingleAnomalyAgent --> LLMUtils
+    SingleAnomalyAgent --> Utils
+    SingleAnomalyAgent --> HolidaysAPITool
+    SingleAnomalyAgent --> CalendarificAPITool
+
+    NaiveAnomalyDetecter --> CLI
+    NaiveAnomalyDetecter --> BulkAnomalyAgent
+
+    MarkdownGenerator --> FileUtils
+
+    SyntheticDataGenerator --> SyntheticData
+    SyntheticDataGenerator --> MarkdownGenerator
+
+    SyntheticData --> MarkdownGenerator
+
+    %% Highlight affected components with hand-drawn style
+    class BulkAnomalyAgent,ConfigFiles affected;
+    classDef affected fill:#fdd,stroke:#f00,stroke-width:2px,stroke-dasharray: 5 5;
+
 ```

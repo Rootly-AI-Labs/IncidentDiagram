@@ -140,7 +140,7 @@ class Diagram:
             timeline_chart = "```mermaid\n" + timeline_chart + "\n```"
 
         # append timeline_chart to chart
-        chart = chart + "\n\n" + timeline_chart
+        chart = timeline_chart + "\n\n" + chart
 
         if output_path is not None:
             # Create directory if it doesn't exist
