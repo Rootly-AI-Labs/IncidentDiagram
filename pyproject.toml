@@ -30,8 +30,6 @@ dev = [
     "build"
 ]
 
-
-
 [tool.setuptools.packages.find]
 where = ["src"]
 

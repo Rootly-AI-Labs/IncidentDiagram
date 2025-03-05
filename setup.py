@@ -13,7 +13,8 @@ setup(
         "litellm",
         "tomli",
         "halo",
-        "asyncio"
+        "asyncio",
+        "nest_asyncio"
 
     ]
 )

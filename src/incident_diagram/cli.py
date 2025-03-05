@@ -10,27 +10,23 @@ class CLI:
         pass
 
     @click.command()
-    @click.option("--dir", "-d", type=click.Path(exists=False), help="Path of source code git directory on disk")
     @click.option("--url", "-u", type=str, help="Github url of source code")
-    @click.option('--model', '-m', default='gpt-4o', help='Model to use for the diagram')
+    @click.option('--model-id', '-m', default='o3-mini', help='Model to use for the diagram')
     @click.option('--output-path', '-o', type=click.Path(exists=False), help='Path to save the output file')
-    @click.option('--incident-summary', '-i', type=str, help='Incident summary')
     @click.option('--incident-summary-file', '-f', type=click.Path(exists=True), help='Path to the incident summary file')
     @click.option('--incident-summary-url', '-iu', type=str, help='URL to the incident summary')
     @click.option('--verbosity', '-v', type=int, default=0, help='Verbosity level')
     def diagram(
-        dir: str,
         url: str,
-        model: str,
+        model_id: str,
         output_path: str,
-        incident_summary: str,
         incident_summary_file: str,
         incident_summary_url: str,
         verbosity: int
     ):
         """Create an incident diagram from input file and save to output path"""
 
-        if incident_summary is None and incident_summary_file is None and incident_summary_url is None:
+        if incident_summary_file is None and incident_summary_url is None:
             click.echo("Error: Incident summary is required")
             exit(1)
 
@@ -61,13 +57,16 @@ class CLI:
             verbosity_level = logging.DEBUG
         elif verbosity == -1:
             llm_loglevel = LogLevel.DEBUG
-            verbosity_level = logging.OFF
+            verbosity_level = logging.CRITICAL
         else:
             click.echo("Error: Invalid verbosity level")
             exit(1)
-
-        diagram = Diagram(url = url, directory = dir, incident_summary = incident_summary, model = model, llm_loglevel = llm_loglevel, verbosity_level = verbosity_level)
-        diagram.generate(output_path)
+        try:
+            diagram = Diagram(url = url, directory = dir, incident_summary = incident_summary, model_id = model_id, llm_loglevel = llm_loglevel, verbosity_level = verbosity_level)
+            diagram.generate(output_path)
+        except Exception as e:
+            click.echo(f"Error: {e}")
+            exit(1)
         exit(0)
 
 

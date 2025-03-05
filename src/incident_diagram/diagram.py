@@ -20,7 +20,6 @@ class Diagram:
     def _load_prompts(self):
         self.prompts = {}
         prompt_path = Path(__file__).parent / "prompts.yaml"
-        print(prompt_path)
         with open(prompt_path) as f:
             prompts = yaml.safe_load(f)
             for key, value in prompts.items():
@@ -35,10 +34,19 @@ class Diagram:
             url = None,
             directory = None,
             incident_summary = None,
-            model = "gpt-4o",
+            model_id = "o3-mini",
             llm_loglevel = LogLevel.ERROR,
             verbosity_level = logging.ERROR
         ):
+        """
+        Initialize the Diagram class.
+        url: The url of the repository to ingest.
+        directory: The directory to ingest. Either url or directory must be provided.
+        incident_summary: Text containing the incident summary.
+        model_id: The model_id to use.
+        llm_loglevel: The log level for the LLM.
+        verbosity_level: The log level for the logger.
+        """
         self.llm_loglevel = llm_loglevel
         self.verbosity_level = verbosity_level
         logging.basicConfig(level=self.verbosity_level)
@@ -60,7 +68,7 @@ class Diagram:
             raise ValueError("incident_summary must be provided")
 
         self._load_prompts()
-        self.model = LLMUtils.get_llm_model(model)
+        self.model = LLMUtils.get_llm_model(model_id)
 
         # litellm._turn_on_debug()
         # Just to be consistent, I am doing all formatting in the run method.
@@ -124,10 +132,10 @@ class Diagram:
 
         components = self._run_with_spinner("Parsing code", lambda: self.code_parser['agent'].run(self._format_prompt(self.code_parser['prompt'], tree=self.tree, code=self.code)))
         incident_components = self._run_with_spinner("Parsing incident", lambda: self.incident_parser['agent'].run(self._format_prompt(self.incident_parser['prompt'], components=components, incident=self.incident_summary)))
-        chart = self._run_with_spinner("Generating diagram", lambda: self.diagram_generator['agent'].run(self._format_prompt(self.diagram_generator['prompt'], components=components, affected_components=incident_components)))
+        chart = self._run_with_spinner("Generating components diagram", lambda: self.diagram_generator['agent'].run(self._format_prompt(self.diagram_generator['prompt'], components=components, affected_components=incident_components)))
 
         timeline = self._run_with_spinner("Generating timeline", lambda: self.timeline_parser['agent'].run(self._format_prompt(self.timeline_parser['prompt'], incident=self.incident_summary)))
-        timeline_chart = self._run_with_spinner("Generating chart", lambda: self.timeline_chart_generator['agent'].run(self._format_prompt(self.timeline_chart_generator['prompt'], timeline=timeline)))
+        timeline_chart = self._run_with_spinner("Generating timeline chart", lambda: self.timeline_chart_generator['agent'].run(self._format_prompt(self.timeline_chart_generator['prompt'], timeline=timeline)))
 
         if not isinstance(chart, str):
             raise ValueError("Generated Output was not a string. LLM is probably not performing well. Please try again.")
@@ -140,7 +148,7 @@ class Diagram:
             timeline_chart = "```mermaid\n" + timeline_chart + "\n```"
 
         # append timeline_chart to chart
-        chart = timeline_chart + "\n\n" + chart
+        chart = chart + "\n\n" + timeline_chart
 
         if output_path is not None:
             # Create directory if it doesn't exist
@@ -148,7 +156,7 @@ class Diagram:
             output_file = os.path.join(output_path, "incident.md")
             with open(output_file, "w") as f:
                 f.write(chart)
-            print(f"Chart generated in {output_file}")
+            print(f"Markdown file with charts generated in {output_file}")
             return output_file
         else:
             return chart
@@ -164,9 +172,11 @@ class Diagram:
 
     def _run_with_spinner(self, text:str, function ):
         if self._is_notebook():
+            print(text + " ...")
             return function()
         else:
-            spinner = Halo(text=text, spinner='dots')
+            spinner = Halo(text=text + " ..." , spinner='dots')
+            spinner.start()
             try:
                 result = function()
                 spinner.stop()

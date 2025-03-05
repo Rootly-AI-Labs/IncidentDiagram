@@ -72,4 +72,6 @@ timeline_chart_generator:
     ============= Timeline =============
     {timeline}
     ============= End of Timeline =============
-    Return a mermaid.js chart of the timeline. The output should be a markdown code block with the mermaid.js chart. Since ':' is a special character in mermaid.js, you should remove it from text. If there is date or time information, use the format "YYYY-MM-DD HH_MM" in 24 hour format.
+    Return a mermaid.js chart of the timeline. The output should be a markdown code block with the mermaid.js chart.
+    Only include the title of an event and not the description.
+    Since ':' is a special character in mermaid.js, you should remove it from text. If there is date or time information, use the format "YYYY-MM-DD HH_MM AM/PM" in 12 hour format. Remove date information if all events are from the same day.
