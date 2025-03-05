@@ -35,7 +35,7 @@ class Diagram:
             directory = None,
             incident_summary = None,
             model_id = "o3-mini",
-            llm_loglevel = LogLevel.ERROR,
+            llm_loglevel = LogLevel.OFF,
             verbosity_level = logging.ERROR
         ):
         """

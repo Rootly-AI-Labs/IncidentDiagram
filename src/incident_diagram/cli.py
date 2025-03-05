@@ -15,7 +15,7 @@ class CLI:
     @click.option('--output-path', '-o', type=click.Path(exists=False), help='Path to save the output file')
     @click.option('--incident-summary-file', '-f', type=click.Path(exists=True), help='Path to the incident summary file')
     @click.option('--incident-summary-url', '-iu', type=str, help='URL to the incident summary')
-    @click.option('--verbosity', '-v', type=int, default=0, help='Verbosity level')
+    @click.option('--verbosity', '-v', type=int, default=-1, help='Verbosity level')
     def diagram(
         url: str,
         model_id: str,
@@ -56,7 +56,7 @@ class CLI:
             llm_loglevel = LogLevel.DEBUG
             verbosity_level = logging.DEBUG
         elif verbosity == -1:
-            llm_loglevel = LogLevel.DEBUG
+            llm_loglevel = LogLevel.OFF
             verbosity_level = logging.CRITICAL
         else:
             click.echo("Error: Invalid verbosity level")
