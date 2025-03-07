@@ -2,11 +2,10 @@
 timeline
     title Timeline Chart
     14_50 : Broken Code Change Deployed
-    14_50 : Broken Code Change Deployed - A broken code change was deployed to production and then to pre-prod as part of the release process.
-    18_14 : Pre-Prod Errors Detected - Pre-prod environment started generating 5xx errors, but error filters masked the issue during tests.
-    19_08 : Production Deployment Initiated - The automated prod nominator system began deploying the change to production.
-    19_09 : Production Outage Begins - Production environments began generating 5xx errors as the change continued deploying; error rate increased linearly.
-    19_27 : Rollback Executed - The automated prod nominator system detected the issues and rolled back the change, ending the incident.
+    18_14 : Pre-Prod Errors Detected
+    19_08 : Production Deployment Initiated
+    19_09 : Production Outage Begins
+    19_27 : Rollback Executed
 ```
 
 ```mermaid
