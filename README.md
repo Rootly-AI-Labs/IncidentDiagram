@@ -21,7 +21,7 @@ Chart generated in artifacts/incident.md
 This repo has an [examptle chart](example_output.md) for reference
 
 ## Requirements 📋
-* `.env` file with with OpenAPI/Gemini/Anthropic API Key (at least one)
+* `.env` file with OpenAPI/Gemini/Anthropic API Key (at least one)
 * Python > 3.10
 
 ## Getting started 🚀
@@ -32,7 +32,7 @@ pip install .
 cp .example.env .env # Add api keys to .env after copying
 incidentdiagram -f example_incident.txt  -u https://github.com/Rootly-AI-Lab/EventOrOutage
 ```
-The example above uses an incident that goes along with the app `https://github.com/Rootly-AI-Lab/EventOrOutage` and a fictive incident restropective in  `example_incident.txt`.
+The example above uses an incident that goes along with the app `https://github.com/Rootly-AI-Lab/EventOrOutage` and a fictive incident retrospective in  `example_incident.txt`.
 
 ## Examples 📖
 Here are a few ways you can use IncidentDiagram:
@@ -44,7 +44,6 @@ Here are a few ways you can use IncidentDiagram:
 -   **LLMs:** [Open AI LLMs](https://platform.openai.com/docs/api-reference/models), [Anthropic LLMs](https://docs.anthropic.com/en/api/models-list), [Gemini LLMs](https://ai.google.dev/api/models).
 -   **Agent:** HuggingFace smolagents
 -   **Data Sources:** External APIs for holidays, news, and event tracking
-
 
 ## Future Improvements
 - More charts from incident reports
