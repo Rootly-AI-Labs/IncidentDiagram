@@ -9,12 +9,14 @@
 </div>
 <br>
 Incident Diagram automatically generates a diagram of your application highlighting what went wrong during an incident. It does so by using LLMs to ingest an incident retrospective and the associated codebase. This is a prototype and is not ready for production use.
+
 ```
 $ incidentdiagram -f example_incident.txt  -u https://github.com/Rootly-AI-Lab/EventOrOutage
 .
 .
 Chart generated in artifacts/incident.md
 ```
+
 <div align="center">
   ![IncidentDiagram example](incidentdiagramexample.png)
 </div>
