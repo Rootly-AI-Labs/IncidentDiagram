@@ -18,7 +18,7 @@ Chart generated in artifacts/incident.md
 ```
 
 <div align="center">
-  ![IncidentDiagram example](incidentdiagramexample.png)
+   <img src="incidentdiagramexample.png" alt="Diagram generated using IncidentDiagram"
 </div>
 
 ## Requirements 📋
