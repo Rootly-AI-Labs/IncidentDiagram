@@ -8,17 +8,16 @@
   <img src="https://img.shields.io/badge/Project_episode-video?style=flat-square&logo=youtube&logoColor=%23FF0000&color=white" alt="YouTube">
 </div>
 <br>
-Incident Diagram automatically generates a diagram of your application highlighting what went wrong during an incident.
-
-It does so by using LLMs to ingest an incident retrospective and the associated codebase.
+Incident Diagram automatically generates a diagram of your application highlighting what went wrong during an incident. It does so by using LLMs to ingest an incident retrospective and the associated codebase. This is a prototype and is not ready for production use.
 ```
 $ incidentdiagram -f example_incident.txt  -u https://github.com/Rootly-AI-Lab/EventOrOutage
 .
 .
 Chart generated in artifacts/incident.md
 ```
-
-This repo has an [examptle chart](example_output.md) for reference
+<div align="center">
+  ![IncidentDiagram example](incidentdiagramexample.png)
+</div>
 
 ## Requirements 📋
 * `.env` file with OpenAPI/Gemini/Anthropic API Key (at least one)
@@ -50,7 +49,7 @@ Here are a few ways you can use IncidentDiagram:
 - Add ollama models
 - The prototype assumes that the incident review mentions the components that were affected
 
-## Backstory
+## Backstory for this prototype
 Explaining an outage can be challenging, especially for complex incidents in distributed systems, which have become the norm. People also have different preferences for how information is presented, and often, a visual representation is worth a thousand words. However, manually creating application and infrastructure diagrams is time-consuming, making it impractical to do so for every incident. That's why we believe **Incident Diagram** could be a valuable tool for SREs and on-call practitioners, helping them quickly visualize and understand what went wrong.
 
 ## About the Rootly AI Lab
