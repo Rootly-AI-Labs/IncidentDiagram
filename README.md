@@ -8,7 +8,7 @@
   <img src="https://img.shields.io/badge/Project_episode-video?style=flat-square&logo=youtube&logoColor=%23FF0000&color=white" alt="YouTube">
 </div>
 <br>
-Generates a diagram of your application highlighting what went wrong during an incident. It does so by using LLMs to ingest an incident retrospective and the associated codebase. 
+Generates a diagram highlighting what happened during an incident by ingesting the retrospective and associated codebase. LLM-powered.
 
 ```
 $ incidentdiagram -f example_incident.txt  -u https://github.com/Rootly-AI-Lab/EventOrOutage
