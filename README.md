@@ -56,5 +56,5 @@ Here are a few ways you can use IncidentDiagram:
 Explaining an outage can be challenging, especially for complex incidents in distributed systems, which have become the norm. People also have different preferences for how information is presented, and often, a visual representation is worth a thousand words. However, manually creating application and infrastructure diagrams is time-consuming, making it impractical to do so for every incident. That's why we believe **Incident Diagram** could be a valuable tool for SREs and on-call practitioners, helping them quickly visualize and understand what went wrong.
 
 ## About the Rootly AI Labs
-This project was developed by the Rootly AI Labs. The AI Labs is a fellow-led program designed to redefine reliability and system operations. We develop innovative prototypes, create open-source tools, and produce research reports we share with the community.
+This project was developed by the [Rootly AI Labs](https://labs.rootly.ai/). The AI Labs is building the future of system reliability and operational excellence. We operate as an open-source incubator, sharing ideas, experimenting, and rapidly prototyping. We're committed to ensuring our research benefits the entire community.
 ![Rootly AI logo](https://github.com/Rootly-AI-Labs/EventOrOutage/raw/main/rootly-ai.png)
