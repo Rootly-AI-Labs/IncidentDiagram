@@ -11,7 +11,7 @@
 Generates a diagram highlighting what happened during an incident by ingesting the retrospective and associated codebase. LLM-powered.
 
 ```
-$ incidentdiagram -f example_incident.txt  -u https://github.com/Rootly-AI-Lab/EventOrOutage
+$ incidentdiagram -f example_incident.txt  -u https://github.com/Rootly-AI-Labs/EventOrOutage
 .
 Chart generated in artifacts/incident.md
 ```
@@ -32,15 +32,15 @@ python -m venv .venv
 source .venv/bin/activate
 pip install .
 cp .example.env .env # Add api keys to .env after copying
-incidentdiagram -f example_incident.txt  -u https://github.com/Rootly-AI-Lab/EventOrOutage
+incidentdiagram -f example_incident.txt  -u https://github.com/Rootly-AI-Labs/EventOrOutage
 ```
-The example above uses an incident that goes along with the app `https://github.com/Rootly-AI-Lab/EventOrOutage` and a fictive incident retrospective in  `example_incident.txt`.
+The example above uses an incident that goes along with the app `https://github.com/Rootly-AI-Labs/EventOrOutage` and a fictive incident retrospective in  `example_incident.txt`.
 
 ## Examples 📖
 Here are a few ways you can use IncidentDiagram:
-* `incidentdiagram -f incident.txt  -u https://github.com/Rootly-AI-Lab/EventOrOutage` – will download the code from github and generate a diagram based on the incident summary in incident.txt
-* `incidentdiagram -f incident.txt  -u https://github.com/Rootly-AI-Lab/EventOrOutage/tree/main -m gpt-4o` – Use a different model
-* `incidentdiagram -iu www.postmortems.com/1345  -u https://github.com/Rootly-AI-Lab/EventOrOutage -m claude-3.5` – Download the incident summary from a URL and generate a diagram
+* `incidentdiagram -f incident.txt  -u https://github.com/Rootly-AI-Labs/EventOrOutage` – will download the code from github and generate a diagram based on the incident summary in incident.txt
+* `incidentdiagram -f incident.txt  -u https://github.com/Rootly-AI-Labs/EventOrOutage/tree/main -m gpt-4o` – Use a different model
+* `incidentdiagram -iu www.postmortems.com/1345  -u https://github.com/Rootly-AI-Labs/EventOrOutage -m claude-3.5` – Download the incident summary from a URL and generate a diagram
 
 ## Stack 🛠️
 -   **LLMs:** [Open AI LLMs](https://platform.openai.com/docs/api-reference/models), [Anthropic LLMs](https://docs.anthropic.com/en/api/models-list), [Gemini LLMs](https://ai.google.dev/api/models).
@@ -55,6 +55,6 @@ Here are a few ways you can use IncidentDiagram:
 ## Backstory for this prototype
 Explaining an outage can be challenging, especially for complex incidents in distributed systems, which have become the norm. People also have different preferences for how information is presented, and often, a visual representation is worth a thousand words. However, manually creating application and infrastructure diagrams is time-consuming, making it impractical to do so for every incident. That's why we believe **Incident Diagram** could be a valuable tool for SREs and on-call practitioners, helping them quickly visualize and understand what went wrong.
 
-## About the Rootly AI Lab
-This project was developed by the Rootly AI Lab. The AI Lab is a fellow-led program designed to redefine reliability and system operations. We develop innovative prototypes, create open-source tools, and produce research reports we share with the community.
-![Rootly AI logo](https://github.com/Rootly-AI-Lab/EventOrOutage/raw/main/rootly-ai.png)
+## About the Rootly AI Labs
+This project was developed by the Rootly AI Labs. The AI Labs is a fellow-led program designed to redefine reliability and system operations. We develop innovative prototypes, create open-source tools, and produce research reports we share with the community.
+![Rootly AI logo](https://github.com/Rootly-AI-Labs/EventOrOutage/raw/main/rootly-ai.png)
