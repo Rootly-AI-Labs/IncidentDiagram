@@ -11,7 +11,7 @@
 Generates a diagram highlighting what happened during an incident by ingesting the retrospective and associated codebase. LLM-powered.
 
 ```
-$ incidentdiagram -f example_incident.txt  -u https://github.com/Rootly-AI-Labs/EventOrOutage
+$ incidentdiagram -f example_incident.txt  -u https://github.com/user/impactedcodebase
 .
 Chart generated in artifacts/incident.md
 ```
@@ -20,7 +20,7 @@ Chart generated in artifacts/incident.md
    <img src="incidentdiagramexample.png" alt="Diagram generated using IncidentDiagram">
 </div>
 
-This is a prototype and is not meant for production use.
+In the fictional scenario illustrated above, the diagram shows an outage affecting a blog. A developer introduced a new feature to verify disk space before image uploads, but mistakenly set the requirement to 500GB. Production servers did not have this amount of available space, preventing the blog admin from uploading images to new posts and readers from adding images to their comments.
 
 ## Requirements 📋
 * `.env` file with OpenAPI/Gemini/Anthropic API Key (at least one)
@@ -36,6 +36,13 @@ incidentdiagram -f example_incident.txt  -u https://github.com/Rootly-AI-Labs/Ev
 ```
 The example above uses an incident that goes along with the app `https://github.com/Rootly-AI-Labs/EventOrOutage` and a fictive incident retrospective in  `example_incident.txt`.
 
+## How it works
+IncidentDiagram process works in 3 main steps:
+    1. Understand the impacted codebase, the file structure, and the code within the files to generate a description of components and their relationships. Returned in JSON format.
+    2. Understand postmortem/incident retrospective and provide a list of components that were affected, matching the components of the codebase. Returned in JSON format.
+    3. Create a diagram(mermaid.js) showing the components and their relationships, highlighting the components the incident affected. Returned in a MD format.
+
+All of these steps are done by prompting LLMs
 ## Examples 📖
 Here are a few ways you can use IncidentDiagram:
 * `incidentdiagram -f incident.txt  -u https://github.com/Rootly-AI-Labs/EventOrOutage` – will download the code from github and generate a diagram based on the incident summary in incident.txt
@@ -47,10 +54,12 @@ Here are a few ways you can use IncidentDiagram:
 -   **Agent:** HuggingFace smolagents
 -   **Data Sources:** External APIs for holidays, news, and event tracking
 
-## Future Improvements
-- More charts from incident reports
+## Notes & Future Improvements
+- Ability to handle a large application code base
+- Ability to ingest multiple code bases and IaC files
 - Add ollama models
-- The prototype assumes that the incident retrospective mentions the components that were affected
+
+This is a prototype meant to demonstrate how LLM can have a positive impact on SRE teams and is not meant to be used in production.
 
 ## Backstory for this prototype
 Explaining an outage can be challenging, especially for complex incidents in distributed systems, which have become the norm. People also have different preferences for how information is presented, and often, a visual representation is worth a thousand words. However, manually creating application and infrastructure diagrams is time-consuming, making it impractical to do so for every incident. That's why we believe **Incident Diagram** could be a valuable tool for SREs and on-call practitioners, helping them quickly visualize and understand what went wrong.
