@@ -38,9 +38,11 @@ The example above uses an incident that goes along with the app `https://github.
 
 ## How it works
 IncidentDiagram process works in 3 main steps:
-    1. Understand the impacted codebase, the file structure, and the code within the files to generate a description of components and their relationships. Returned in JSON format.
-    2. Understand postmortem/incident retrospective and provide a list of components that were affected, matching the components of the codebase. Returned in JSON format.
-    3. Create a diagram(mermaid.js) showing the components and their relationships, highlighting the components the incident affected. Returned in a MD format.
+
+ 1. Understand the impacted codebase, the file structure, and the code within the files to generate a description of components and their relationships. Returned in JSON format.
+ 2. Understand postmortem/incident retrospective and provide a list of components that were affected, matching the components of the codebase. Returned in JSON format.
+ 3. Create a diagram(mermaid.js) showing the components and their relationships, highlighting the components the incident affected. Returned in a MD format.
+
 
 All of these steps are done by prompting LLMs
 ## Examples 📖
